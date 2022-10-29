@@ -1,0 +1,22 @@
+{
+  "name": "hijkpw-scripts-mod",
+  "version": "1.0.0",
+  "description": "本脚本是备份自网络跳越hijk大佬的脚本修改，",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghjan/hijkpw-scripts-mod.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ghjan/hijkpw-scripts-mod/issues"
+  },
+  "homepage": "https://github.com/ghjan/hijkpw-scripts-mod#readme",
+  "dependencies": {
+    "tiny-pinyin": "^1.3.2"
+  }
+}
