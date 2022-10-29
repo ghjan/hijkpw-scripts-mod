@@ -9,8 +9,11 @@ YELLOW="\033[33m"   # Warning message
 BLUE="\033[36m"     # Info message
 PLAIN='\033[0m'
 
-# 以下网站是随机从Google上找到的无广告小说网站，不喜欢请改成其他网址，以http或https开头
-# 搭建好后无法打开伪装域名，可能是反代小说网站挂了，请在网站留言，或者Github发issue，以便替换新的网站
+
+#The following websites are ad free novel websites randomly found on Google. If you don't like them, please change them to other websites, starting with http or https
+
+#After setting up, the masquerade domain name cannot be opened. It may be that the anti generation novel website has hung up. Please leave a message on the website or Github issue an issue to replace the new website
+
 SITES=(
 http://www.zhuizishu.com/
 http://xs.56dyc.com/
@@ -252,12 +255,12 @@ archAffix(){
 getData() {
     if [[ "$TLS" = "true" || "$XTLS" = "true" ]]; then
         echo ""
-        echo " Xray一键脚本，运行之前请确认如下条件已经具备："
+        echo " Before running the Xray one click script, please confirm that the following conditions have been met:"
         colorEcho ${YELLOW} "  1. 一个伪装域名"
         colorEcho ${YELLOW} "  2. 伪装域名DNS解析指向当前服务器ip（${IP}）"
         colorEcho ${BLUE} "  3. 如果/root目录下有 xray.pem 和 xray.key 证书密钥文件，无需理会条件2"
         echo " "
-        read -p " 确认满足按y，按其他退出脚本：" answer
+        read -p " 确认满足按y，按其他退出脚本:" answer
         if [[ "${answer,,}" != "y" ]]; then
             exit 0
         fi
@@ -265,7 +268,7 @@ getData() {
         echo ""
         while true
         do
-            read -p " 请输入伪装域名：" DOMAIN
+            read -p " 请输入伪装域名:" DOMAIN
             if [[ -z "${DOMAIN}" ]]; then
                 colorEcho ${RED} " 域名输入错误，请重新输入！"
             else
@@ -273,7 +276,7 @@ getData() {
             fi
         done
         DOMAIN=${DOMAIN,,}
-        colorEcho ${BLUE}  " 伪装域名(host)：$DOMAIN"
+        colorEcho ${BLUE}  " 伪装域名(host):$DOMAIN"
 
         echo ""
         if [[ -f ~/xray.pem && -f ~/xray.key ]]; then
@@ -284,7 +287,7 @@ getData() {
             resolve=`curl -sL http://ip-api.com/json/${DOMAIN}`
             res=`echo -n ${resolve} | grep ${IP}`
             if [[ -z "${res}" ]]; then
-                colorEcho ${BLUE}  "${DOMAIN} 解析结果：${resolve}"
+                colorEcho ${BLUE}  "${DOMAIN} 解析结果:${resolve}"
                 colorEcho ${RED}  " 域名未解析到当前服务器IP(${IP})!"
                 exit 1
             fi
@@ -294,38 +297,38 @@ getData() {
     echo ""
     if [[ "$(needNginx)" = "no" ]]; then
         if [[ "$TLS" = "true" ]]; then
-            read -p " 请输入xray监听端口[强烈建议443，默认443]：" PORT
+            read -p " 请输入xray监听端口[强烈建议443，默认443]:" PORT
             [[ -z "${PORT}" ]] && PORT=443
         else
-            read -p " 请输入xray监听端口[100-65535的一个数字]：" PORT
+            read -p " 请输入xray监听端口[100-65535的一个数字]:" PORT
             [[ -z "${PORT}" ]] && PORT=`shuf -i200-65000 -n1`
             if [[ "${PORT:0:1}" = "0" ]]; then
                 colorEcho ${RED}  " 端口不能以0开头"
                 exit 1
             fi
         fi
-        colorEcho ${BLUE}  " xray端口：$PORT"
+        colorEcho ${BLUE}  " xray端口:$PORT"
     else
-        read -p " 请输入Nginx监听端口[100-65535的一个数字，默认443]：" PORT
+        read -p " 请输入Nginx监听端口[100-65535的一个数字，默认443]:" PORT
         [[ -z "${PORT}" ]] && PORT=443
         if [ "${PORT:0:1}" = "0" ]; then
             colorEcho ${BLUE}  " 端口不能以0开头"
             exit 1
         fi
-        colorEcho ${BLUE}  " Nginx端口：$PORT"
+        colorEcho ${BLUE}  " Nginx端口:$PORT"
         XPORT=`shuf -i10000-65000 -n1`
     fi
 
     if [[ "$KCP" = "true" ]]; then
         echo ""
-        colorEcho $BLUE " 请选择伪装类型："
+        colorEcho $BLUE " 请选择伪装类型:"
         echo "   1) 无"
         echo "   2) BT下载"
         echo "   3) 视频通话"
         echo "   4) 微信视频通话"
         echo "   5) dtls"
         echo "   6) wiregard"
-        read -p "  请选择伪装类型[默认：无]：" answer
+        read -p "  请选择伪装类型[默认:无]:" answer
         case $answer in
             2)
                 HEADER_TYPE="utp"
@@ -346,7 +349,7 @@ getData() {
                 HEADER_TYPE="none"
                 ;;
         esac
-        colorEcho $BLUE " 伪装类型：$HEADER_TYPE"
+        colorEcho $BLUE " 伪装类型:$HEADER_TYPE"
         SEED=`cat /proc/sys/kernel/random/uuid`
     fi
 
@@ -354,7 +357,7 @@ getData() {
         echo ""
         read -p " 请设置trojan密码（不输则随机生成）:" PASSWORD
         [[ -z "$PASSWORD" ]] && PASSWORD=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1`
-        colorEcho $BLUE " trojan密码：$PASSWORD"
+        colorEcho $BLUE " trojan密码:$PASSWORD"
     fi
 
     if [[ "$XTLS" = "true" ]]; then
@@ -376,14 +379,14 @@ getData() {
                 FLOW="xtls-rprx-direct"
                 ;;
         esac
-        colorEcho $BLUE " 流控模式：$FLOW"
+        colorEcho $BLUE " 流控模式:$FLOW"
     fi
 
     if [[ "${WS}" = "true" ]]; then
         echo ""
         while true
         do
-            read -p " 请输入伪装路径，以/开头(不懂请直接回车)：" WSPATH
+            read -p " 请输入伪装路径，以/开头(不懂请直接回车):" WSPATH
             if [[ -z "${WSPATH}" ]]; then
                 len=`shuf -i5-12 -n1`
                 ws=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $len | head -n 1`
@@ -397,7 +400,7 @@ getData() {
                 break
             fi
         done
-        colorEcho ${BLUE}  " ws路径：$WSPATH"
+        colorEcho ${BLUE}  " ws路径:$WSPATH"
     fi
 
     if [[ "$TLS" = "true" || "$XTLS" = "true" ]]; then
@@ -439,7 +442,7 @@ getData() {
                 PROXY_URL="https://bing.imeizi.me"
                 ;;
             5)
-                read -p " 请输入反代站点(以http或者https开头)：" PROXY_URL
+                read -p " 请输入反代站点(以http或者https开头):" PROXY_URL
                 if [[ -z "$PROXY_URL" ]]; then
                     colorEcho $RED " 请输入反代网站！"
                     exit 1
@@ -454,13 +457,13 @@ getData() {
             esac
         fi
         REMOTE_HOST=`echo ${PROXY_URL} | cut -d/ -f3`
-        colorEcho $BLUE " 伪装网站：$PROXY_URL"
+        colorEcho $BLUE " 伪装网站:$PROXY_URL"
 
         echo ""
-        colorEcho $BLUE "  是否允许搜索引擎爬取网站？[默认：不允许]"
+        colorEcho $BLUE "  是否允许搜索引擎爬取网站？[默认:不允许]"
         echo "    y)允许，会有更多ip请求网站，但会消耗一些流量，vps流量充足情况下推荐使用"
         echo "    n)不允许，爬虫不会访问网站，访问ip比较单一，但能节省vps流量"
-        read -p "  请选择：[y/n]" answer
+        read -p "  请选择:[y/n]" answer
         if [[ -z "$answer" ]]; then
             ALLOW_SPIDER="n"
         elif [[ "${answer,,}" = "y" ]]; then
@@ -468,14 +471,14 @@ getData() {
         else
             ALLOW_SPIDER="n"
         fi
-        colorEcho $BLUE " 允许搜索引擎：$ALLOW_SPIDER"
+        colorEcho $BLUE " 允许搜索引擎:$ALLOW_SPIDER"
     fi
 
     echo ""
     read -p " 是否安装BBR(默认安装)?[y/n]:" NEED_BBR
     [[ -z "$NEED_BBR" ]] && NEED_BBR=y
     [[ "$NEED_BBR" = "Y" ]] && NEED_BBR=y
-    colorEcho $BLUE " 安装BBR：$NEED_BBR"
+    colorEcho $BLUE " 安装BBR:$NEED_BBR"
 }
 
 installNginx() {
@@ -536,7 +539,7 @@ getCert() {
         res=`netstat -ntlp| grep -E ':80 |:443 '`
         if [[ "${res}" != "" ]]; then
             colorEcho ${RED}  " 其他进程占用了80或443端口，请先关闭再运行一键脚本"
-            echo " 端口占用信息如下："
+            echo " 端口占用信息如下:"
             echo ${res}
             exit 1
         fi
@@ -1451,7 +1454,7 @@ uninstall() {
     fi
 
     echo ""
-    read -p " 确定卸载Xray？[y/n]：" answer
+    read -p " 确定卸载Xray？[y/n]:" answer
     if [[ "${answer,,}" = "y" ]]; then
         domain=`grep Host $CONFIG_FILE | cut -d: -f2 | tr -d \",' '`
         if [[ "$domain" = "" ]]; then
@@ -1599,41 +1602,41 @@ outputVmess() {
     link="vmess://${link}"
 
     echo -e "   ${BLUE}IP(address): ${PLAIN} ${RED}${IP}${PLAIN}"
-    echo -e "   ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-    echo -e "   ${BLUE}id(uuid)：${PLAIN}${RED}${uid}${PLAIN}"
-    echo -e "   ${BLUE}额外id(alterid)：${PLAIN} ${RED}${alterid}${PLAIN}"
-    echo -e "   ${BLUE}加密方式(security)：${PLAIN} ${RED}auto${PLAIN}"
-    echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}" 
+    echo -e "   ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+    echo -e "   ${BLUE}id(uuid):${PLAIN}${RED}${uid}${PLAIN}"
+    echo -e "   ${BLUE}额外id(alterid):${PLAIN} ${RED}${alterid}${PLAIN}"
+    echo -e "   ${BLUE}加密方式(security):${PLAIN} ${RED}auto${PLAIN}"
+    echo -e "   ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}" 
     echo  
     echo -e "   ${BLUE}vmess链接:${PLAIN} $RED$link$PLAIN"
 }
 
 outputVmessKCP() {
     echo -e "   ${BLUE}IP(address): ${PLAIN} ${RED}${IP}${PLAIN}"
-    echo -e "   ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-    echo -e "   ${BLUE}id(uuid)：${PLAIN}${RED}${uid}${PLAIN}"
-    echo -e "   ${BLUE}额外id(alterid)：${PLAIN} ${RED}${alterid}${PLAIN}"
-    echo -e "   ${BLUE}加密方式(security)：${PLAIN} ${RED}auto${PLAIN}"
-    echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}"
-    echo -e "   ${BLUE}伪装类型(type)：${PLAIN} ${RED}${type}${PLAIN}"
-    echo -e "   ${BLUE}mkcp seed：${PLAIN} ${RED}${seed}${PLAIN}" 
+    echo -e "   ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+    echo -e "   ${BLUE}id(uuid):${PLAIN}${RED}${uid}${PLAIN}"
+    echo -e "   ${BLUE}额外id(alterid):${PLAIN} ${RED}${alterid}${PLAIN}"
+    echo -e "   ${BLUE}加密方式(security):${PLAIN} ${RED}auto${PLAIN}"
+    echo -e "   ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}"
+    echo -e "   ${BLUE}伪装类型(type):${PLAIN} ${RED}${type}${PLAIN}"
+    echo -e "   ${BLUE}mkcp seed:${PLAIN} ${RED}${seed}${PLAIN}" 
 }
 
 outputTrojan() {
     if [[ "$xtls" = "true" ]]; then
         echo -e "   ${BLUE}IP/域名(address): ${PLAIN} ${RED}${domain}${PLAIN}"
-        echo -e "   ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-        echo -e "   ${BLUE}密码(password)：${PLAIN}${RED}${password}${PLAIN}"
-        echo -e "   ${BLUE}流控(flow)：${PLAIN}$RED$flow${PLAIN}"
-        echo -e "   ${BLUE}加密(encryption)：${PLAIN} ${RED}none${PLAIN}"
-        echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}" 
-        echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}XTLS${PLAIN}"
+        echo -e "   ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+        echo -e "   ${BLUE}密码(password):${PLAIN}${RED}${password}${PLAIN}"
+        echo -e "   ${BLUE}流控(flow):${PLAIN}$RED$flow${PLAIN}"
+        echo -e "   ${BLUE}加密(encryption):${PLAIN} ${RED}none${PLAIN}"
+        echo -e "   ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}" 
+        echo -e "   ${BLUE}底层安全传输(tls):${PLAIN}${RED}XTLS${PLAIN}"
     else
         echo -e "   ${BLUE}IP/域名(address): ${PLAIN} ${RED}${domain}${PLAIN}"
-        echo -e "   ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-        echo -e "   ${BLUE}密码(password)：${PLAIN}${RED}${password}${PLAIN}"
-        echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}" 
-        echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}TLS${PLAIN}"
+        echo -e "   ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+        echo -e "   ${BLUE}密码(password):${PLAIN}${RED}${password}${PLAIN}"
+        echo -e "   ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}" 
+        echo -e "   ${BLUE}底层安全传输(tls):${PLAIN}${RED}TLS${PLAIN}"
     fi
 }
 
@@ -1654,13 +1657,13 @@ outputVmessTLS() {
     link=`echo -n ${raw} | base64 -w 0`
     link="vmess://${link}"
     echo -e "   ${BLUE}IP(address): ${PLAIN} ${RED}${IP}${PLAIN}"
-    echo -e "   ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-    echo -e "   ${BLUE}id(uuid)：${PLAIN}${RED}${uid}${PLAIN}"
-    echo -e "   ${BLUE}额外id(alterid)：${PLAIN} ${RED}${alterid}${PLAIN}"
-    echo -e "   ${BLUE}加密方式(security)：${PLAIN} ${RED}none${PLAIN}"
-    echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}" 
-    echo -e "   ${BLUE}伪装域名/主机名(host)/SNI/peer名称：${PLAIN}${RED}${domain}${PLAIN}"
-    echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}TLS${PLAIN}"
+    echo -e "   ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+    echo -e "   ${BLUE}id(uuid):${PLAIN}${RED}${uid}${PLAIN}"
+    echo -e "   ${BLUE}额外id(alterid):${PLAIN} ${RED}${alterid}${PLAIN}"
+    echo -e "   ${BLUE}加密方式(security):${PLAIN} ${RED}none${PLAIN}"
+    echo -e "   ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}" 
+    echo -e "   ${BLUE}伪装域名/主机名(host)/SNI/peer名称:${PLAIN}${RED}${domain}${PLAIN}"
+    echo -e "   ${BLUE}底层安全传输(tls):${PLAIN}${RED}TLS${PLAIN}"
     echo  
     echo -e "   ${BLUE}vmess链接: ${PLAIN}$RED$link$PLAIN"
 }
@@ -1683,15 +1686,15 @@ outputVmessWS() {
     link="vmess://${link}"
 
     echo -e "   ${BLUE}IP(address): ${PLAIN} ${RED}${IP}${PLAIN}"
-    echo -e "   ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-    echo -e "   ${BLUE}id(uuid)：${PLAIN}${RED}${uid}${PLAIN}"
-    echo -e "   ${BLUE}额外id(alterid)：${PLAIN} ${RED}${alterid}${PLAIN}"
-    echo -e "   ${BLUE}加密方式(security)：${PLAIN} ${RED}none${PLAIN}"
-    echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}" 
-    echo -e "   ${BLUE}伪装类型(type)：${PLAIN}${RED}none$PLAIN"
-    echo -e "   ${BLUE}伪装域名/主机名(host)/SNI/peer名称：${PLAIN}${RED}${domain}${PLAIN}"
-    echo -e "   ${BLUE}路径(path)：${PLAIN}${RED}${wspath}${PLAIN}"
-    echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}TLS${PLAIN}"
+    echo -e "   ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+    echo -e "   ${BLUE}id(uuid):${PLAIN}${RED}${uid}${PLAIN}"
+    echo -e "   ${BLUE}额外id(alterid):${PLAIN} ${RED}${alterid}${PLAIN}"
+    echo -e "   ${BLUE}加密方式(security):${PLAIN} ${RED}none${PLAIN}"
+    echo -e "   ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}" 
+    echo -e "   ${BLUE}伪装类型(type):${PLAIN}${RED}none$PLAIN"
+    echo -e "   ${BLUE}伪装域名/主机名(host)/SNI/peer名称:${PLAIN}${RED}${domain}${PLAIN}"
+    echo -e "   ${BLUE}路径(path):${PLAIN}${RED}${wspath}${PLAIN}"
+    echo -e "   ${BLUE}底层安全传输(tls):${PLAIN}${RED}TLS${PLAIN}"
     echo  
     echo -e "   ${BLUE}vmess链接:${PLAIN} $RED$link$PLAIN"
 }
@@ -1704,10 +1707,10 @@ showInfo() {
     fi
     
     echo ""
-    echo -n -e " ${BLUE}Xray运行状态：${PLAIN}"
+    echo -n -e " ${BLUE}Xray运行状态:${PLAIN}"
     statusText
     echo -e " ${BLUE}Xray配置文件: ${PLAIN} ${RED}${CONFIG_FILE}${PLAIN}"
-    colorEcho $BLUE " Xray配置信息："
+    colorEcho $BLUE " Xray配置信息:"
 
     getConfigFileInfo
 
@@ -1731,45 +1734,45 @@ showInfo() {
     else
         if [[ "$kcp" = "true" ]]; then
             echo -e "   ${BLUE}IP(address): ${PLAIN} ${RED}${IP}${PLAIN}"
-            echo -e "   ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-            echo -e "   ${BLUE}id(uuid)：${PLAIN}${RED}${uid}${PLAIN}"
-            echo -e "   ${BLUE}加密(encryption)：${PLAIN} ${RED}none${PLAIN}"
-            echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}"
-            echo -e "   ${BLUE}伪装类型(type)：${PLAIN} ${RED}${type}${PLAIN}"
-            echo -e "   ${BLUE}mkcp seed：${PLAIN} ${RED}${seed}${PLAIN}" 
+            echo -e "   ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+            echo -e "   ${BLUE}id(uuid):${PLAIN}${RED}${uid}${PLAIN}"
+            echo -e "   ${BLUE}加密(encryption):${PLAIN} ${RED}none${PLAIN}"
+            echo -e "   ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}"
+            echo -e "   ${BLUE}伪装类型(type):${PLAIN} ${RED}${type}${PLAIN}"
+            echo -e "   ${BLUE}mkcp seed:${PLAIN} ${RED}${seed}${PLAIN}" 
             return 0
         fi
         if [[ "$xtls" = "true" ]]; then
             echo -e " ${BLUE}IP(address): ${PLAIN} ${RED}${IP}${PLAIN}"
-            echo -e " ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-            echo -e " ${BLUE}id(uuid)：${PLAIN}${RED}${uid}${PLAIN}"
-            echo -e " ${BLUE}流控(flow)：${PLAIN}$RED$flow${PLAIN}"
-            echo -e " ${BLUE}加密(encryption)：${PLAIN} ${RED}none${PLAIN}"
-            echo -e " ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}" 
-            echo -e " ${BLUE}伪装类型(type)：${PLAIN}${RED}none$PLAIN"
-            echo -e " ${BLUE}伪装域名/主机名(host)/SNI/peer名称：${PLAIN}${RED}${domain}${PLAIN}"
-            echo -e " ${BLUE}底层安全传输(tls)：${PLAIN}${RED}XTLS${PLAIN}"
+            echo -e " ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+            echo -e " ${BLUE}id(uuid):${PLAIN}${RED}${uid}${PLAIN}"
+            echo -e " ${BLUE}流控(flow):${PLAIN}$RED$flow${PLAIN}"
+            echo -e " ${BLUE}加密(encryption):${PLAIN} ${RED}none${PLAIN}"
+            echo -e " ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}" 
+            echo -e " ${BLUE}伪装类型(type):${PLAIN}${RED}none$PLAIN"
+            echo -e " ${BLUE}伪装域名/主机名(host)/SNI/peer名称:${PLAIN}${RED}${domain}${PLAIN}"
+            echo -e " ${BLUE}底层安全传输(tls):${PLAIN}${RED}XTLS${PLAIN}"
         elif [[ "$ws" = "false" ]]; then
             echo -e " ${BLUE}IP(address):  ${PLAIN}${RED}${IP}${PLAIN}"
-            echo -e " ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-            echo -e " ${BLUE}id(uuid)：${PLAIN}${RED}${uid}${PLAIN}"
-            echo -e " ${BLUE}流控(flow)：${PLAIN}$RED$flow${PLAIN}"
-            echo -e " ${BLUE}加密(encryption)：${PLAIN} ${RED}none${PLAIN}"
-            echo -e " ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}" 
-            echo -e " ${BLUE}伪装类型(type)：${PLAIN}${RED}none$PLAIN"
-            echo -e " ${BLUE}伪装域名/主机名(host)/SNI/peer名称：${PLAIN}${RED}${domain}${PLAIN}"
-            echo -e " ${BLUE}底层安全传输(tls)：${PLAIN}${RED}TLS${PLAIN}"
+            echo -e " ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+            echo -e " ${BLUE}id(uuid):${PLAIN}${RED}${uid}${PLAIN}"
+            echo -e " ${BLUE}流控(flow):${PLAIN}$RED$flow${PLAIN}"
+            echo -e " ${BLUE}加密(encryption):${PLAIN} ${RED}none${PLAIN}"
+            echo -e " ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}" 
+            echo -e " ${BLUE}伪装类型(type):${PLAIN}${RED}none$PLAIN"
+            echo -e " ${BLUE}伪装域名/主机名(host)/SNI/peer名称:${PLAIN}${RED}${domain}${PLAIN}"
+            echo -e " ${BLUE}底层安全传输(tls):${PLAIN}${RED}TLS${PLAIN}"
         else
             echo -e " ${BLUE}IP(address): ${PLAIN} ${RED}${IP}${PLAIN}"
-            echo -e " ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
-            echo -e " ${BLUE}id(uuid)：${PLAIN}${RED}${uid}${PLAIN}"
-            echo -e " ${BLUE}流控(flow)：${PLAIN}$RED$flow${PLAIN}"
-            echo -e " ${BLUE}加密(encryption)：${PLAIN} ${RED}none${PLAIN}"
-            echo -e " ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}" 
-            echo -e " ${BLUE}伪装类型(type)：${PLAIN}${RED}none$PLAIN"
-            echo -e " ${BLUE}伪装域名/主机名(host)/SNI/peer名称：${PLAIN}${RED}${domain}${PLAIN}"
-            echo -e " ${BLUE}路径(path)：${PLAIN}${RED}${wspath}${PLAIN}"
-            echo -e " ${BLUE}底层安全传输(tls)：${PLAIN}${RED}TLS${PLAIN}"
+            echo -e " ${BLUE}端口(port):${PLAIN}${RED}${port}${PLAIN}"
+            echo -e " ${BLUE}id(uuid):${PLAIN}${RED}${uid}${PLAIN}"
+            echo -e " ${BLUE}流控(flow):${PLAIN}$RED$flow${PLAIN}"
+            echo -e " ${BLUE}加密(encryption):${PLAIN} ${RED}none${PLAIN}"
+            echo -e " ${BLUE}传输协议(network):${PLAIN} ${RED}${network}${PLAIN}" 
+            echo -e " ${BLUE}伪装类型(type):${PLAIN}${RED}none$PLAIN"
+            echo -e " ${BLUE}伪装域名/主机名(host)/SNI/peer名称:${PLAIN}${RED}${domain}${PLAIN}"
+            echo -e " ${BLUE}路径(path):${PLAIN}${RED}${wspath}${PLAIN}"
+            echo -e " ${BLUE}底层安全传输(tls):${PLAIN}${RED}TLS${PLAIN}"
         fi
     fi
 }
@@ -1816,11 +1819,11 @@ menu() {
     echo -e "  ${GREEN}17.${PLAIN}  查看Xray日志"
     echo " -------------"
     echo -e "  ${GREEN}0.${PLAIN}   退出"
-    echo -n " 当前状态："
+    echo -n " 当前状态:"
     statusText
     echo 
 
-    read -p " 请选择操作[0-17]：" answer
+    read -p " 请选择操作[0-17]:" answer
     case $answer in
         0)
             exit 0
